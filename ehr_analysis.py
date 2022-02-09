@@ -8,7 +8,7 @@ import datetime
 # ## Data parsing
 
 # %%
-def parse_data(path_to_file: str) -> list[str]:
+def parse_data(path_to_file: str) -> list[list[str]]:
     "read file.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
     with open(path_to_file) as file:
@@ -29,7 +29,7 @@ def parse_data(path_to_file: str) -> list[str]:
 # ### Old patients
 
 # %%
-def age(a: list[str]) -> list[str]:
+def age(a: str) -> int:
     """change format of date and transfer into ages(compare with 2022)"""
     return 2022 - datetime.datetime.strptime(a, "%Y-%m-%d %H:%M:%S").year
 
