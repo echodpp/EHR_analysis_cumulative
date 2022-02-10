@@ -43,7 +43,6 @@ def num_older_than(age_over: int, data: list[str]) -> int:
         if i > 0:  # O(1)
             if int(age(line[-1])) >= age_over:  # O(1)
                 number_of_patient += 1  # O(1)
-
     return number_of_patient
 
 
@@ -68,5 +67,5 @@ def sick_patients(lab: str, gt_lt: str, value: float, data: list[str]) -> list[s
                     if float(line[-3]) < value:  # O(1)
                         df.append(line[0])  # O(1)
     else:
-        print("error: gt_lt can only be choosen from > or <")
+        raise ValueError("gt_lt can only be choosen from > or <")
     return df
