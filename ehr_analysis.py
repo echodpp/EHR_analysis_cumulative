@@ -8,7 +8,7 @@ import datetime
 # ## Data parsing
 
 # %%
-def parse_data(path_to_file: str) -> list[list[str]]:
+def parse_data(path_to_file: str) -> list[str]:
     "read file.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
     with open(path_to_file) as file:
@@ -41,7 +41,7 @@ def num_older_than(age_over: int, data: list[str]) -> int:
     number_of_patient = 0
     for i, line in enumerate(data):  # N times
         if i > 0:  # O(1)
-            if int(age(line[-1])) >= age_over:  # O(1)
+            if age(line[-1]) >= age_over:  # O(1)
                 number_of_patient += 1  # O(1)
     return number_of_patient
 
