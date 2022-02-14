@@ -8,7 +8,7 @@ import datetime
 # ## Data parsing
 
 # %%
-def parse_data(path_to_file: str) -> list[str]:
+def parse_data(path_to_file: str) -> list[list[str]]:
     "read file.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
     with open(path_to_file) as file:
