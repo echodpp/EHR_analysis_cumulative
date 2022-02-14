@@ -35,7 +35,7 @@ def age(a: str) -> int:
 
 
 # %%
-def num_older_than(age_over: int, data: list[str]) -> int:
+def num_older_than(age_over: int, data: list[list[str]]) -> int:
     """compare ages line by line in data with chosen number(age_over),and return the total number of patients"
     computational complexity :0(N)"""
     number_of_patient = 0
@@ -50,7 +50,9 @@ def num_older_than(age_over: int, data: list[str]) -> int:
 # ### Sick patients
 
 # %%
-def sick_patients(lab: str, gt_lt: str, value: float, data: list[str]) -> list[str]:
+def sick_patients(
+    lab: str, gt_lt: str, value: float, data: list[list[str]]
+) -> list[str]:
     """find sick patients in data confirmed by Three factors(lab, gt_lt, value)
     computational complexity :0(N)"""
     df = []
