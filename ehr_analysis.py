@@ -1,8 +1,6 @@
 # %% [markdown]
 # # Computational complexity/Data structures
 
-# %%
-import datetime
 
 # %% [markdown]
 # ## Data parsing
@@ -22,8 +20,6 @@ def parse_data(path_to_file: str) -> list[list[str]]:
 # %% [markdown]
 # ## Analysis
 
-# %% [markdown]
-#
 
 # %% [markdown]
 # ### Old patients
@@ -71,3 +67,34 @@ def sick_patients(
     else:
         raise ValueError("gt_lt can only be choosen from > or <")
     return df
+
+
+# %% [markdown]
+# ### Age of patients when admission
+
+
+def year(a: str) -> int:
+    """change format of date only keep year"""
+    return int(a.split()[0].split("-")[0])
+
+
+def age_admission(patientid: str) -> int:
+    """compare the birth year from patient*file with the earilst record year from lab*file"""
+    df1 = parse_data("LabsCorePopulatedTable.txt")
+    df2 = parse_data("PatientCorePopulatedTable.txt")
+    test_date = []
+    for i, line in enumerate(df1):
+        if i > 0:
+            if line[0] == "patientid":
+                test_date.append(year(line[-1]))
+            else:
+                raise ValueError("patientid can not be found in df1")
+    for i, line in enumerate(df2):
+        if i > 0:
+            if line[0] == "1A8791E3-A61C-455A-8DEE-763EB90C9B2C":
+                birthyear = year(line[2])
+            else:
+                raise ValueError("patientid can not be found in df2")
+    test_date.sort()
+    age_at = test_date[0] - birthyear
+    return age_at

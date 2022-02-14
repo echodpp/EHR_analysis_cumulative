@@ -73,3 +73,19 @@ def test_sick_patients():
     )
     expected = ["1A8791E3-A61C-455A-8DEE-763EB90C9B2C"]
     assert result == expected
+
+
+def test_year():
+    from ehr_analysis import year
+
+    result = year("1947-12-28 02:45:40.547")
+    expected = 1947
+    assert result == expected
+
+
+def test_age_admission():
+    from ehr_analysis import age_admission
+
+    result = age_admission("1A8791E3-A61C-455A-8DEE-763EB90C9B2C")
+    expected = 19
+    assert result == expected
