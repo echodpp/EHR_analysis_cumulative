@@ -31,7 +31,7 @@ def parse_data(path_to_file: str) -> list[list[str]]:
 # %%
 def age(a: str) -> int:
     """change format of date and transfer into ages(compare with 2022)"""
-    return 2022 - datetime.datetime.strptime(a, "%Y-%m-%d %H:%M:%S").year
+    return 2022 - int(a.split()[0].split("-")[0])
 
 
 # %%
@@ -41,7 +41,7 @@ def num_older_than(age_over: int, data: list[list[str]]) -> int:
     number_of_patient = 0
     for i, line in enumerate(data):  # N times
         if i > 0:  # O(1)
-            if age(line[-1]) >= age_over:  # O(1)
+            if age(line[2]) >= age_over:  # O(1)
                 number_of_patient += 1  # O(1)
     return number_of_patient
 
