@@ -35,9 +35,6 @@ def parse_data_patient(path_to_file: str) -> dict[str, Patient]:
     return data
 
 
-print(parse_data_patient("PatientCorePopulatedTable.txt"))
-
-
 def parse_data_lab(path_to_file: str) -> dict[str, Lab]:
     "read labs.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
