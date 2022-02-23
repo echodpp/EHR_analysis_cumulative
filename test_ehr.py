@@ -1,5 +1,12 @@
+from ehr_analysis import parse_data
+from ehr_analysis import age
+from ehr_analysis import num_older_than
+from ehr_analysis import sick_patients
+from ehr_analysis import year
+from ehr_analysis import age_admission
+
+
 def test_parse_data():
-    from ehr_analysis import parse_data
 
     result = parse_data("PatientCorePopulatedTable.txt")
     expected = [
@@ -17,7 +24,6 @@ def test_parse_data():
 
 
 def test_age():
-    from ehr_analysis import age
 
     result = age("1947-12-28 02:45:40.547")
     expected = 75
@@ -25,7 +31,6 @@ def test_age():
 
 
 def test_num_older_than():
-    from ehr_analysis import num_older_than
 
     result = num_older_than(
         60,
@@ -46,7 +51,6 @@ def test_num_older_than():
 
 
 def test_sick_patients():
-    from ehr_analysis import sick_patients
 
     result = sick_patients(
         "URINALYSIS: RED BLOOD CELLS",
@@ -76,7 +80,6 @@ def test_sick_patients():
 
 
 def test_year():
-    from ehr_analysis import year
 
     result = year("1947-12-28 02:45:40.547")
     expected = 1947
@@ -84,7 +87,6 @@ def test_year():
 
 
 def test_age_admission():
-    from ehr_analysis import age_admission
 
     result = age_admission("1A8791E3-A61C-455A-8DEE-763EB90C9B2C")
     expected = 19

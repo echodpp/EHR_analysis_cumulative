@@ -11,16 +11,15 @@ sick_patients：` sick_patients(lab: str, gt_lt: str, value: float, data: list[l
 # Requirements
 no packges required
 # Installation
-nstall the module from ehr_analysis.py at https://github.com/xiaoyudpp/-_private_-
-# API description
- don't know how to write this 
+Install the module from ehr_analysis.py at https://github.com/xiaoyudpp/-_private_-
 # Running the tests
 there are test file included for testing with the `pytest` framework
-example: 
+### example: 
+```{python}
+from ehr_analysis import age
 def test_age():
-    from ehr_analysis import age
 
     result = age("1947-12-28 02:45:40.547")
     expected = 75
     assert result == expected
-
+```
