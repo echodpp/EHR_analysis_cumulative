@@ -35,7 +35,11 @@ def parse_data_patient(path_to_file: str) -> list[Patient]:
     return data
 
 
+<<<<<<< HEAD
 def parse_data_lab(path_to_file: str) -> list[Lab]:
+=======
+def parse_data_lab(path_to_file: str) -> dict[str, Lab]:
+>>>>>>> d6692a97d246e626cf27aa1abe13e44a8b2196fd
     "read labs.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
     with open(path_to_file) as file:
