@@ -35,11 +35,8 @@ def parse_data_patient(path_to_file: str) -> list[Patient]:
     return data
 
 
-<<<<<<< HEAD
+
 def parse_data_lab(path_to_file: str) -> list[Lab]:
-=======
-def parse_data_lab(path_to_file: str) -> dict[str, Lab]:
->>>>>>> d6692a97d246e626cf27aa1abe13e44a8b2196fd
     "read labs.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
     with open(path_to_file) as file:
@@ -86,14 +83,19 @@ def age_admission(
 ) -> int:
     """compare the birth year from patient*file with the earilst record year from lab*file"""
     date = 2022
+    
     for patient in data_lab:
         if patient.ID == patientid:
             if int(patient.Labtime.split()[0].split("-")[0]) < date:
                 date = int(patient.Labtime.split()[0].split("-")[0])
+        else:
+            raise ValueError("Patient is not in data.")
 
     for patient in data_patient:
         if patient.ID == patientid:
             birthyear = int(patient.DOB.split()[0].split("-")[0])
-
+        else:
+            raise ValueError("Patient is not in data.")
     age_at_admission = date - birthyear
     return age_at_admission
+    
