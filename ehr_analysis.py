@@ -14,68 +14,63 @@ class Patient(object):
 class Lab(object):
     """Patient's lab information"""
 
-    def __init__(self, ID, Labname, Value, Units, Labtime):
-        self.ID = ID
-        self.Value = Value
+    def __init__(self, id, Labname, Value, Units, Labtime):
+        self.ID = id
         self.Labname = Labname
+        self.Value = Value
         self.Units = Units
-        self, Labtime = Labtime
+        self.Labtime = Labtime
 
 
-def parse_data_patient(path_to_file: str) -> dict[str, Patient]:
+def parse_data_patient(path_to_file: str) -> list[Patient]:
     "read patient.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
     with open(path_to_file) as file:
         lines = file.readlines()
-    data = dict()
+    data = []
     for i, line in enumerate(lines):
         if i > 0:
             ID, GENDER, DOB, RACE, _, _, _ = line.split("\t")
-            data[ID] = Patient(ID, GENDER, DOB, RACE)
+            data.append(Patient(ID, GENDER, DOB, RACE))
     return data
 
 
-print(parse_data_patient("PatientCorePopulatedTable.txt"))
-
-
-def parse_data_lab(path_to_file: str) -> dict[str, Lab]:
+def parse_data_lab(path_to_file: str) -> list[Lab]:
     "read labs.txt to a list line by line and split by tab\t"
     "computational complexity :0(N)"
     with open(path_to_file) as file:
         lines = file.readlines()
-    data = dict()
+    data = []
     for i, line in enumerate(lines):
         if i > 0:
-            ID, _, Labname, Value, Units, Labtime = line.split("\t")
-            data[ID] = Lab(ID, Labname, Value, Units, Labtime)
+            id, _, Labname, Value, Units, Labtime = line.split("\t")
+            data.append(Lab(id, Labname, Value, Units, Labtime))
     return data
 
 
-def num_older_than(age_over: int, data: dict[str, Patient]) -> int:
+def num_older_than(age_over: int, data: list[Patient]) -> int:
     """Calculate number of patients older than a given age"
     computational complexity :0(N)"""
     number_of_patient = 0
-    for patient in data.values():
+    for patient in data:
         if patient.age() >= age_over:
             number_of_patient += 1
     return number_of_patient
 
 
-def sick_patients(
-    lab: str, gt_lt: str, value: float, data: dict[str, Lab]
-) -> list[str]:
+def sick_patients(lab: str, gt_lt: str, value: float, data: list[Lab]) -> list[str]:
     """find sick patients in data confirmed by Three factors(lab, gt_lt, value)
     computational complexity :0(N)"""
     sick_patients = set()
     if gt_lt == ">":
-        for patient in data.values():
+        for patient in data:
             if patient.Labname == lab:
-                if patient.Value > value:
+                if float(patient.Value) > value:
                     sick_patients.add(patient.ID)
     if gt_lt == "<":
-        for patient in data.values():
+        for patient in data:
             if patient.Labname == lab:
-                if patient.Value > value:
+                if float(patient.Value) > value:
                     sick_patients.add(patient.ID)
     else:
         raise ValueError("gt_lt can only be choosen from > or <")
@@ -83,20 +78,18 @@ def sick_patients(
 
 
 def age_admission(
-    patientid: str, data1: dict[str, Lab], data2: dict[str, Patient]
+    patientid: str, data_lab: list[Lab], data_patient: list[Patient]
 ) -> int:
     """compare the birth year from patient*file with the earilst record year from lab*file"""
-    data = 2022
-    if patientid in data1:
-        for patient in data1:
-            if data1.Labtime < data:
-                date = data1.Labtime
-    else:
-        raise PatientError("Patient is not in lab data.")
-    if patientid in data2:
-        for patient in data2:
+    date = 2022
+    for patient in data_lab:
+        if patient.ID == patientid:
+            if int(patient.Labtime.split()[0].split("-")[0]) < date:
+                date = int(patient.Labtime.split()[0].split("-")[0])
+
+    for patient in data_patient:
+        if patient.ID == patientid:
             birthyear = int(patient.DOB.split()[0].split("-")[0])
-    else:
-        raise PatientError("Patient is not in patient data.")
+
     age_at_admission = date - birthyear
     return age_at_admission
