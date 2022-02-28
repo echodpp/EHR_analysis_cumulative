@@ -1,36 +1,26 @@
-from ehr_analysis import parse_data_lab
-from ehr_analysis import parse_data_patient
-from ehr_analysis import num_older_than
-from ehr_analysis import sick_patients
-from ehr_analysis import age_admission
+import ehr_analysis as ehr
 
 
-def test_parse_data_patient():
+def test_parse_data():
 
-    result = parse_data_patient("PatientCorePopulatedTable.txt")
-    assert len(result) == 100
-
-
-def test_parse_data_lab():
-
-    result = parse_data_lab("LabsCorePopulatedTable.txt")
+    result = ehr.parse_data("LabsCorePopulatedTable.txt")
     assert len(result) == 111483
 
 
 def test_num_older_than():
 
-    result = num_older_than(60, parse_data_patient("PatientCorePopulatedTable.txt"))
+    result = ehr.num_older_than(60, ehr.parse_data("PatientCorePopulatedTable.txt"))
     expected = 58
     assert result == expected
 
 
 def test_sick_patients():
 
-    result = sick_patients(
+    result = ehr.sick_patients(
         "URINALYSIS: RED BLOOD CELLS",
         ">",
         1,
-        parse_data_lab("LabsCorePopulatedTable.txt"),
+        ehr.parse_data("LabsCorePopulatedTable.txt"),
     )
     expected = 1
     assert len(result) == expected
@@ -38,6 +28,10 @@ def test_sick_patients():
 
 def test_age_admission():
 
-    result = age_admission("1A8791E3-A61C-455A-8DEE-763EB90C9B2C")
-    expected = 19
+    result = ehr.age_admission(
+        "1A8791E3-A61C-455A-8DEE-763EB90C9B2C",
+        ehr.parse_data("LabsCorePopulatedTable.txt"),
+        ehr.parse_data("PatientCorePopulatedTable.txt"),
+    )
+    expected = 18.9
     assert result == expected
