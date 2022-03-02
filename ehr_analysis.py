@@ -25,9 +25,9 @@ def parse_data(path_to_file: str) -> list[list[str]]:
 # ### Old patients
 
 # %%
-def age(a: str) -> int:
+def age(date: str) -> int:
     """change format of date and transfer into ages(compare with 2022)"""
-    return 2022 - int(a.split()[0].split("-")[0])
+    return 2022 - int(date.split()[0].split("-")[0])
 
 
 # %%
