@@ -10,6 +10,8 @@ num_older_than:` num_older_than(age_over: int, data: list[list[str]]) -> int` co
 sick_patients：` sick_patients(lab: str, gt_lt: str, value: float, data: list[list[str]]) -> list[str]` return a list of patients ID from (data) of certain (lab) , with 'LabValue'  greater or less than a certain (value)
 # Requirements
 no packges required
+# API description
+ don't know how to write this 
 # Installation
 Install the module from ehr_analysis.py at https://github.com/xiaoyudpp/-_private_-
 # Running the tests
