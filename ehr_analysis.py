@@ -1,15 +1,15 @@
 from datetime import datetime
+import sqlite3
 
 
-class Patient(object):
+class Patient:
     """Patient information'"""
 
-    def __init__(self, id: str, gender: str, dob: str, race: str):
+    def __init__(self, id: str, dob: str):
         """declare variables in the class patient"""
         self.id = id
         self.dob = datetime.fromisoformat(dob)
-        self.gender = gender
-        self.race = race
+        
 
     @property
     def age(self) -> float:
@@ -19,32 +19,47 @@ class Patient(object):
         return current_age.days / 365.25
 
 
-class Lab(object):
+class Lab:
     """Patient's lab information"""
-
-    def __init__(self, patientid: str, name: str, value: str, units: str, time: str):
+    def __init__(self, patientid: str, name: str, value: str, time: str):
         """declare variables in the class lab"""
         self.patientid = patientid
         self.name = name
         self.value = value
-        self.units = units
         self.time = datetime.fromisoformat(time)
 
 
-def parse_data(path_to_file: str) -> list[Lab] or list[Patient]:
-    "read labs.txt to a list line by line and split by tab\t"
-    "computational complexity :O(N*M)"
+def read_file(path_to_file: str) -> list[list[str]]:
+    "read file.txt to a list line by line and split by tab\t"
+    "computational complexity :0(N)"
     with open(path_to_file) as file:
         lines = file.readlines()
     data = []
     for i, line in enumerate(lines):
-        if i > 0:
-            if path_to_file == "LabsCorePopulatedTable.txt":
-                patientid, _, name, value, units, time = line.strip("\n").split("\t")
-                data.append(Lab(patientid, name, value, units, time))
-            if path_to_file == "PatientCorePopulatedTable.txt":
-                id, gender, dob, race, _, _, _ = line.strip("\n").split("\t")
-                data.append(Patient(id, gender, dob, race))
+        if i > 0:  # N times
+            data.append(line.strip("\n").split("\t"))  # O(1)      
+    return data
+
+
+def parse_data(path_to_file: str) -> list[Lab] or list[Patient]:
+    "INSERTed into a SQLite database"
+    con = sqlite3.connect("mydatabase.db")
+    c = con.cursor()
+    data = []
+    if path_to_file == "PatientCorePopulatedTable.txt":
+        c.execute("""CREATE TABLE IF NOT EXISTS patient (id TEXT PRIMARY KEY,gender TEXT,dob INTEGER,race TEXT,marital TEXT,language TEXT,pbp REAL)"""
+)
+        c.executemany("INSERT INTO patient VALUES (?,?,?,?,?,?,?)", read_file(path_to_file))
+        for row in c.execute("SELECT * FROM patient"):
+            id, _, dob, _, _, _,_= row
+            data.append(Patient(id, dob))
+    if path_to_file == "LabsCorePopulatedTable.txt":
+        c.execute("""CREATE TABLE IF NOT EXISTS lab (patientid TEXT,admissionid TEXT,name TEXT,value TEXT,unit TEXT,dot INTEGER)"""
+)
+        c.executemany("INSERT INTO lab VALUES (?,?,?,?,?,?)", read_file(path_to_file))
+        for row in c.execute("SELECT * FROM lab"):
+            patientid, _, name,value, _,time= row
+            data.append(Lab(patientid, name,value,time))
     return data
 
 
