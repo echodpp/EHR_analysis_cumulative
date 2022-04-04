@@ -9,7 +9,6 @@ class Patient:
         """declare variables in the class patient"""
         self.id = id
         self.dob = datetime.fromisoformat(dob)
-        
 
     @property
     def age(self) -> float:
@@ -18,9 +17,33 @@ class Patient:
         current_age = today - self.dob
         return current_age.days / 365.25
 
+    @property
+    def dob(self) -> datetime:
+        """Return patient's dob."""
+        con = sqlite3.connect("mydatabase.db")
+        c = con.cursor()
+        data = c.execute(
+            "SELECT dob FROM patient WHERE patient_id = ?",
+            (self.id,),
+        )
+        dob = datetime.fromisoformat(data.fetchone()[0])
+        con.close()
+        return
+
+    @property
+    def age_at_admission(self) -> float:
+        """Return patient's age at admission."""
+        date = datetime.now()
+        con = sqlite3.connect("mydatabase.db")
+        c = con.cursor()
+        data = c.execute("SELECT min(time) FROM lab WHERE patient_id = ?", (self.id,))
+        age = (date - self.dob).days / 365.25
+        return age
+
 
 class Lab:
     """Patient's lab information"""
+
     def __init__(self, patientid: str, name: str, value: str, time: str):
         """declare variables in the class lab"""
         self.patientid = patientid
@@ -37,7 +60,7 @@ def read_file(path_to_file: str) -> list[list[str]]:
     data = []
     for i, line in enumerate(lines):
         if i > 0:  # N times
-            data.append(line.strip("\n").split("\t"))  # O(1)      
+            data.append(line.strip("\n").split("\t"))  # O(1)
     return data
 
 
@@ -47,19 +70,25 @@ def parse_data(path_to_file: str) -> list[Lab] or list[Patient]:
     c = con.cursor()
     data = []
     if path_to_file == "PatientCorePopulatedTable.txt":
-        c.execute("""CREATE TABLE IF NOT EXISTS patient (id TEXT PRIMARY KEY,gender TEXT,dob INTEGER,race TEXT,marital TEXT,language TEXT,pbp REAL)"""
-)
-        c.executemany("INSERT INTO patient VALUES (?,?,?,?,?,?,?)", read_file(path_to_file))
+        firstzip = list(zip(*read_file(path_to_file)))
+        secondzip = zip(firstzip[0], firstzip[2])
+        c.execute(
+            """CREATE TABLE IF NOT EXISTS patient (id TEXT PRIMARY KEY,dob INTEGER)"""
+        )
+        c.executemany("INSERT INTO patient VALUES (?,?)", secondzip)
         for row in c.execute("SELECT * FROM patient"):
-            id, _, dob, _, _, _,_= row
+            id, dob = row
             data.append(Patient(id, dob))
     if path_to_file == "LabsCorePopulatedTable.txt":
-        c.execute("""CREATE TABLE IF NOT EXISTS lab (patientid TEXT,admissionid TEXT,name TEXT,value TEXT,unit TEXT,dot INTEGER)"""
-)
-        c.executemany("INSERT INTO lab VALUES (?,?,?,?,?,?)", read_file(path_to_file))
+        firstzip = list(zip(*read_file(path_to_file)))
+        secondzip = zip(firstzip[0], firstzip[2], firstzip[3], firstzip[5])
+        c.execute(
+            """CREATE TABLE IF NOT EXISTS lab (patientid TEXT,name TEXT,value TEXT,dot INTEGER)"""
+        )
+        c.executemany("INSERT INTO lab VALUES (?,?,?,?)", secondzip)
         for row in c.execute("SELECT * FROM lab"):
-            patientid, _, name,value, _,time= row
-            data.append(Lab(patientid, name,value,time))
+            patientid, name, value, time = row
+            data.append(Lab(patientid, name, value, time))
     return data
 
 
