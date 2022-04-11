@@ -5,10 +5,10 @@ import sqlite3
 class Patient:
     """Patient information'"""
 
-    def __init__(self, id: str, dob: str):
+    def __init__(self, id: str):
         """declare variables in the class patient"""
         self.id = id
-        self.dob = datetime.fromisoformat(dob)
+        
 
     @property
     def age(self) -> float:
@@ -28,7 +28,7 @@ class Patient:
         )
         dob = datetime.fromisoformat(data.fetchone()[0])
         con.close()
-        return
+        return dob
 
     @property
     def age_at_admission(self) -> float:
@@ -71,14 +71,14 @@ def parse_data(path_to_file: str) -> list[Lab] or list[Patient]:
     data = []
     if path_to_file == "PatientCorePopulatedTable.txt":
         firstzip = list(zip(*read_file(path_to_file)))
-        secondzip = zip(firstzip[0], firstzip[2])
+        secondzip = zip(firstzip[0])
         c.execute(
             """CREATE TABLE IF NOT EXISTS patient (id TEXT PRIMARY KEY,dob INTEGER)"""
         )
-        c.executemany("INSERT INTO patient VALUES (?,?)", secondzip)
+        c.executemany("INSERT INTO patient VALUES (?)", secondzip)
         for row in c.execute("SELECT * FROM patient"):
-            id, dob = row
-            data.append(Patient(id, dob))
+            id = row
+            data.append(Patient(id))
     if path_to_file == "LabsCorePopulatedTable.txt":
         firstzip = list(zip(*read_file(path_to_file)))
         secondzip = zip(firstzip[0], firstzip[2], firstzip[3], firstzip[5])
