@@ -8,7 +8,6 @@ class Patient:
     def __init__(self, id: str):
         """declare variables in the class patient"""
         self.id = id
-        
 
     @property
     def age(self) -> float:
@@ -36,7 +35,7 @@ class Patient:
         date = datetime.now()
         con = sqlite3.connect("mydatabase.db")
         c = con.cursor()
-        data = c.execute("SELECT min(time) FROM lab WHERE patient_id = ?", (self.id,))
+        date = c.execute("SELECT min(time) FROM lab WHERE patient_id = ?", (self.id,))
         age = (date - self.dob).days / 365.25
         return age
 
