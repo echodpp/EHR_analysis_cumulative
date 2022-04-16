@@ -1,13 +1,15 @@
 from datetime import datetime
+from pickle import FALSE, TRUE
 import sqlite3
 
 
 class Patient:
     """Patient information'"""
 
-    def __init__(self, id: str):
+    def __init__(self, id: str, dob: str):
         """declare variables in the class patient"""
         self.id = id
+        self.dob = datetime.fromisoformat(dob)
 
     @property
     def age(self) -> float:
@@ -15,29 +17,6 @@ class Patient:
         today = datetime.now()
         current_age = today - self.dob
         return current_age.days / 365.25
-
-    @property
-    def dob(self) -> datetime:
-        """Return patient's dob."""
-        con = sqlite3.connect("mydatabase.db")
-        c = con.cursor()
-        data = c.execute(
-            "SELECT dob FROM patient WHERE patient_id = ?",
-            (self.id,),
-        )
-        dob = datetime.fromisoformat(data.fetchone()[0])
-        con.close()
-        return dob
-
-    @property
-    def age_at_admission(self) -> float:
-        """Return patient's age at admission."""
-        date = datetime.now()
-        con = sqlite3.connect("mydatabase.db")
-        c = con.cursor()
-        date = c.execute("SELECT min(time) FROM lab WHERE patient_id = ?", (self.id,))
-        age = (date - self.dob).days / 365.25
-        return age
 
 
 class Lab:
@@ -65,19 +44,19 @@ def read_file(path_to_file: str) -> list[list[str]]:
 
 def parse_data(path_to_file: str) -> list[Lab] or list[Patient]:
     "INSERTed into a SQLite database"
-    con = sqlite3.connect("mydatabase.db")
+    con = sqlite3.connect("new_db.db")
     c = con.cursor()
     data = []
     if path_to_file == "PatientCorePopulatedTable.txt":
         firstzip = list(zip(*read_file(path_to_file)))
-        secondzip = zip(firstzip[0])
+        secondzip = zip(firstzip[0], firstzip[2])
         c.execute(
             """CREATE TABLE IF NOT EXISTS patient (id TEXT PRIMARY KEY,dob INTEGER)"""
         )
-        c.executemany("INSERT INTO patient VALUES (?)", secondzip)
+        c.executemany("INSERT INTO patient VALUES (?,?)", secondzip)
         for row in c.execute("SELECT * FROM patient"):
-            id = row
-            data.append(Patient(id))
+            id, dob = row
+            data.append(Patient(id, dob))
     if path_to_file == "LabsCorePopulatedTable.txt":
         firstzip = list(zip(*read_file(path_to_file)))
         secondzip = zip(firstzip[0], firstzip[2], firstzip[3], firstzip[5])
@@ -88,6 +67,8 @@ def parse_data(path_to_file: str) -> list[Lab] or list[Patient]:
         for row in c.execute("SELECT * FROM lab"):
             patientid, name, value, time = row
             data.append(Lab(patientid, name, value, time))
+    con.commit()
+    con.close()
     return data
 
 
@@ -126,17 +107,22 @@ def age_admission(
     """compare the birth year from patient*file with the earilst record year from lab*file
     The computational complexity of this function is O(N)"""
     date = datetime.now()
+
+    find_data = FALSE
     for lab in data_lab:
         if lab.patientid == patientid:
             if lab.time < date:
                 date = lab.time
-        else:
-            raise ValueError("Patient is not in lab data.")
+                find_data = TRUE
+                break
+    if not find_data:
+        raise ValueError("Patient is not in lab data.")
 
+    find_data = FALSE
     for patient in data_patient:
         if patient.id == patientid:
             birthday = patient.dob
-        else:
-            raise ValueError("Patient is not in patient data.")
+    if not find_data:
+        raise ValueError("Patient is not in patient data.")
     age_at_admission = (date - birthday).days / 365.25
     return round(age_at_admission, 1)
