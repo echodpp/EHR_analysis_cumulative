@@ -22,17 +22,14 @@ def test_sick_patients():
         1,
         data,
     )
-    expected = ["1A8791E3-A61C-455A-8DEE-763EB90C9B2C"]
-    assert len(result) == expected
+    assert len(result) == 1
 
 
 def test_age_admission():
     data_patient = ehr.parse_data("PatientCorePopulatedTable.txt")
     data_lab = ehr.parse_data("LabsCorePopulatedTable.txt")
     result = ehr.age_admission(
-        "1A8791E3-A61C-455A-8DEE-763EB90C9B2C",
-        data_patient,
-        data_lab,
+        "1A8791E3-A61C-455A-8DEE-763EB90C9B2C", data_lab, data_patient
     )
     expected = 18.9
     assert result == expected
